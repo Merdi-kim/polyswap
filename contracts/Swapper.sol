@@ -9,10 +9,10 @@ import "./Zex_Token.sol";
 
 contract Swapper is ZEXTOKEN {
 
-/**
- * @dev maps the address of a token to a boolean
- * Boolean indicates the availability of the pool
- */
+   /**
+    * @dev maps token addresses to a boolean
+    * Boolean indicates the availability of the pool
+   */
     mapping(address => bool) pools;
     
     /**
@@ -23,9 +23,9 @@ contract Swapper is ZEXTOKEN {
      */
 
     function swap(address token_, uint amount) external {
-        //require(pools[token_] == true, 'null');
-        IERC20(token_).transferFrom(msg.sender, address(this), amount);
-        transfer(payable(msg.sender), amount);
+        require(pools[token_] == true, 'null');
+        IERC20(token_).transferFrom(msg.sender,address(this), amount);
+        transfer(msg.sender, amount);
     }
 
     /**
@@ -35,10 +35,9 @@ contract Swapper is ZEXTOKEN {
      * @param amount amount of token to swap/receive 
      */
     function unswap(address token_, uint amount) external {
-        //require(pools[token_] == true, 'null');
-        approve(address(this), amount);
-        transferFrom(msg.sender, address(this), amount);
-        IERC20(token_).transferFrom(address(this), msg.sender, amount);
+       require(pools[token_] == true, 'null');
+       transfer(address(this), amount);
+       IERC20(token_).transfer(msg.sender, amount);
     }
 
     /**
