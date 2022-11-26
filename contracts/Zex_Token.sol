@@ -5,9 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
-
 contract ZEXTOKEN is ERC20, ERC20Burnable, Pausable, Ownable {
     constructor() ERC20("ZEXEL", "ZEX") {
         _mint(msg.sender, 20000 * 10 ** decimals());

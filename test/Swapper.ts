@@ -46,19 +46,40 @@ describe('Swapper contract', () => {
   describe('Swapper functionalities', () => {
     it('should swap ARR and DBX tokens', async() => {
       const [user1, user2] = await ethers.getSigners()
-      const tokensToSwap = ethers.utils.parseEther('15000')
+      const tokensToSwap = ethers.utils.parseEther('10000')
       await arrContract.connect(deployer).approve(swapperContract.address, tokensToSwap)
       await dbxContract.connect(deployer).approve(swapperContract.address, tokensToSwap)
       await swapperContract.connect(deployer).swap(arrContract.address, tokensToSwap)
       await swapperContract.connect(deployer).swap(dbxContract.address, tokensToSwap)
       const contractBalance = ethers.utils.formatEther( await arrContract.balanceOf(swapperContract.address) )
-      expect(Number(contractBalance)).to.equal(15000)
+      expect(Number(contractBalance)).to.equal(10000)
     })
   
     it('should unswap ZEX TOKENS', async() => {
-      const tokensToSwap = ethers.utils.parseEther('15000')
+      const tokensToSwap = ethers.utils.parseEther('10000')
       //await swapperContract.connect(deployer).approve(swapperContract.address, tokensToSwap)
       await swapperContract.connect(deployer).unswap(arrContract.address, tokensToSwap)
+    })
+  })
+
+  describe('should swap and unswap with new token price', () => {
+    it('should modify token price', async() => {
+      await swapperContract.connect(deployer).modifyTokenPrice(2)
+    })
+
+    it('should successfuly swap ARR with new price', async() => {
+      const tokensToSwap = ethers.utils.parseEther('5000')
+      await arrContract.connect(deployer).approve(swapperContract.address, tokensToSwap)
+      await swapperContract.connect(deployer).swap(arrContract.address, tokensToSwap)
+      const userBalance = ethers.utils.formatEther( await arrContract.balanceOf(deployer.address) )
+      expect(Number(userBalance)).to.equal(15000)
+    })
+
+    it('should successfully swap ZEX tokens to ARR tokens', async() => {
+      const tokensToReceive = ethers.utils.parseEther('5000')
+      await swapperContract.connect(deployer).unswap(arrContract.address, tokensToReceive)
+      const swapperBalance = ethers.utils.formatEther( await arrContract.balanceOf(deployer.address))
+      expect(Number(swapperBalance)).to.equal(20000)
     })
   })
 

@@ -14,6 +14,8 @@ contract Swapper is ZEXTOKEN {
     * Boolean indicates the availability of the pool
    */
     mapping(address => bool) pools;
+
+    uint256 tokenPrice = 1;
     
     /**
      * Convert an amount of input token_ to an equivalent amount of the output token 
@@ -25,7 +27,7 @@ contract Swapper is ZEXTOKEN {
     function swap(address token_, uint amount) external {
         require(pools[token_] == true, 'null');
         IERC20(token_).transferFrom(msg.sender,address(this), amount);
-        transfer(msg.sender, amount);
+        transfer(msg.sender, amount/tokenPrice);
     }
 
     /**
@@ -36,7 +38,8 @@ contract Swapper is ZEXTOKEN {
      */
     function unswap(address token_, uint amount) external {
        require(pools[token_] == true, 'null');
-       transfer(address(this), amount);
+       require(balanceOf(msg.sender) >= amount/tokenPrice, 'Unsufficient balance');
+       transfer(address(this), amount/tokenPrice);
        IERC20(token_).transfer(msg.sender, amount);
     }
 
@@ -48,5 +51,9 @@ contract Swapper is ZEXTOKEN {
     function createPool(address token_) external onlyOwner {
         require(pools[token_] == false, 'Already exists');
         pools[token_] = true;
+    }
+
+    function modifyTokenPrice(uint256 _price) external onlyOwner {
+        tokenPrice = _price;
     }
 }
