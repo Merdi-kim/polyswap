@@ -57,12 +57,11 @@ describe('Swapper contract', () => {
   
     it('should unswap ZEX TOKENS', async() => {
       const tokensToSwap = ethers.utils.parseEther('10000')
-      //await swapperContract.connect(deployer).approve(swapperContract.address, tokensToSwap)
       await swapperContract.connect(deployer).unswap(arrContract.address, tokensToSwap)
     })
   })
 
-  describe('should swap and unswap with new token price', () => {
+  describe('Swap and unswap with new token price', () => {
     it('should modify token price', async() => {
       await swapperContract.connect(deployer).modifyTokenPrice(2)
     })
